@@ -1,32 +1,32 @@
-const { ObjectId } = require("bson");
-const mongoose = require("mongoose");
+const { ObjectId } = require('bson');
+const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 30
+    maxlength: 30,
   },
   link: {
     type: String,
-    required: true
+    required: true,
   },
   owner: {
     type: ObjectId,
-    required: true
+    required: true,
   },
   likes: {
     type: [ObjectId],
-    default: null
+    default: null,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   __v: {
-    type: Number, select: false
-  }
+    type: Number, select: false,
+  },
 });
 
-module.exports = mongoose.model("card", cardSchema);
+module.exports = mongoose.model('card', cardSchema);

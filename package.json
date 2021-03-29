@@ -22,7 +22,9 @@
   "homepage": "https://github.com/melkornwah/express-mesto#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "bson": "^4.2.3",
     "express": "^4.17.1",
+    "helmet": "^4.4.1",
     "mongoose": "^5.12.2"
   },
   "devDependencies": {
