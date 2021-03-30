@@ -46,8 +46,7 @@ module.exports.updateUser = (req, res) => {
     name: req.body.name,
     about: req.body.about,
   },
-  { runValidators: true },
-  { new: true })
+  { runValidators: true, new: true })
     .orFail(() => res.status(404).send({ message: 'Пользователь с указанным _id не найден.' }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
