@@ -7,7 +7,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params._id)
+  User.findById(req.params.userId)
     .orFail(new Error('Пользователь по указанному _id не найден.'))
     .then((user) => {
       res.send({ data: user });
@@ -42,7 +42,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {
+  User.findByIdAndUpdate(req.params.userId, {
     name: req.body.name,
     about: req.body.about,
   },
@@ -59,7 +59,7 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {
+  User.findByIdAndUpdate(req.params.userId, {
     avatar: req.body.avatar,
   }, { runValidators: true })
     .orFail(() => res.status(404).send({ message: 'Пользователь с указанным _id не найден.' }))
