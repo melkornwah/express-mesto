@@ -42,7 +42,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  User.findByIdAndUpdate(req.params.userId, {
+  User.findByIdAndUpdate(req.user._id, {
     name: req.body.name,
     about: req.body.about,
   },
@@ -59,9 +59,9 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.params.userId, {
+  User.findByIdAndUpdate(req.user._id, {
     avatar: req.body.avatar,
-  }, { runValidators: true })
+  }, { runValidators: true, new: true })
     .orFail(() => res.status(404).send({ message: 'Пользователь с указанным _id не найден.' }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
