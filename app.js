@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const usersRoute = require('./routes/users');
 const cardsRoute = require('./routes/cards');
+const auth = require('./middlewares/auth');
+const { createUser, login } = require('./controllers/users');
 
 const app = express();
 
@@ -22,15 +24,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '60620f7d100469332c9661d9',
-  };
+app.post('/signup', createUser);
+app.post('/signin', login);
 
-  next();
-});
+app.use(auth);
 
 app.use('/', usersRoute, cardsRoute);
+
+app.use((err, req, res, next) => {
+  res.status(err.status).send({ message: err.message });
+});
 
 app.listen(3000, () => {
   // eslint-disable-next-line no-console
