@@ -11,11 +11,6 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    validate: {
-      validator(v) {
-        return /^(http|https):\/\/[www.]*\d*\D{2,}/ig.test(v);
-      },
-    },
   },
   owner: {
     type: ObjectId,
@@ -23,7 +18,7 @@ const cardSchema = new mongoose.Schema({
   },
   likes: {
     type: [ObjectId],
-    default: null,
+    default: [],
   },
   createdAt: {
     type: Date,
