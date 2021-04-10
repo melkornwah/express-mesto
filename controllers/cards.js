@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const Card = require('../models/cards');
 const BadRequestError = require('../errors/bad-request-error');
 const NotFoundError = require('../errors/not-found-error');
@@ -49,7 +48,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new BadRequestError('Неверно указан _id карточки.');
       }
       if (err.message === 'Вы не являетесь владельцем карточки.') {
-        throw new BadRequestError(400, 'Вы не являетесь владельцем карточки.');
+        throw new BadRequestError('Вы не являетесь владельцем карточки.');
       }
       throw new ServerError('Произошла ошибка на сервере.');
     })
@@ -58,13 +57,13 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId,
-    { $addToSet: { likes: jwt._id } },
+    { $addToSet: { likes: req.user._id } },
     { new: true })
     .orFail(new Error('Карточка с указанным _id не найдена.'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.message === 'Карточка с указанным _id не найдена.') {
-        throw new NotFoundError(404, err.message);
+        throw new NotFoundError(err.message);
       }
       if (err.kind === 'ObjectId') {
         throw new BadRequestError('Переданы некорректные данные для постановки или снятия лайка.');
@@ -77,7 +76,7 @@ module.exports.likeCard = (req, res, next) => {
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: jwt._id } },
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new Error('Карточка с указанным _id не найдена.'))

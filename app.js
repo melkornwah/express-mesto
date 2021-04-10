@@ -26,11 +26,30 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    link: Joi.string()
-      .regex(/^(http|https):\/\/[www.]*\d*\D{2,}\.(jpg|png|jpeg|gif)/i),
+    name: Joi.string()
+      .min(1),
+    about: Joi.string()
+      .min(1),
+    avatar: Joi.string()
+      .pattern(new RegExp(/(https|http)?:\/\/.*/i)),
+    email: Joi.string()
+      .required()
+      .email(),
+    password: Joi.string()
+      .required()
+      .min(1),
   }),
 }), createUser);
-app.post('/signin', login);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string()
+      .required()
+      .email(),
+    password: Joi.string()
+      .required()
+      .min(1),
+  }),
+}), login);
 
 app.use(auth);
 
@@ -41,7 +60,7 @@ app.use('*', () => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
+  res.status(err.statusCode || 400).json({ message: err.message });
 
   next();
 });

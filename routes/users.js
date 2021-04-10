@@ -6,24 +6,52 @@ const {
 
 router.get('/users', getUsers);
 
-router.get('/users/me', getCurrentUser);
+router.get('/users/me', celebrate({
+  params: Joi.object().keys({
+    _id: Joi.string()
+      .required()
+      .hex()
+      .length(24),
+  }),
+}), getCurrentUser);
 
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string()
-      .min(24)
-      .max(24)
+    _id: Joi.string()
+      .required()
       .hex()
-      .required(),
+      .length(24),
   }),
 }), getUserById);
 
-router.patch('/users/me', updateUser);
+router.patch('/users/me', celebrate({
+  params: Joi.object().keys({
+    _id: Joi.string()
+      .required()
+      .hex()
+      .length(24),
+  }),
+  body: Joi.object().keys({
+    name: Joi.string()
+      .required()
+      .min(1),
+    about: Joi.string()
+      .required()
+      .min(1),
+  }),
+}), updateUser);
 
 router.patch('/users/me/avatar', celebrate({
+  params: Joi.object().keys({
+    _id: Joi.string()
+      .required()
+      .hex()
+      .length(24),
+  }),
   body: Joi.object().keys({
-    link: Joi.string()
-      .regex(/^(http|https):\/\/[www.]*\d*\D{2,}\.(jpg|png|jpeg|gif)/i),
+    avatar: Joi.string()
+      .required()
+      .pattern(new RegExp(/(https|http)?:\/\/.*/i)),
   }),
 }), updateAvatar);
 

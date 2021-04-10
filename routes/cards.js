@@ -8,38 +8,39 @@ router.get('/cards', getCards);
 
 router.post('/cards', celebrate({
   body: Joi.object().keys({
+    name: Joi.string()
+      .required()
+      .min(1),
     link: Joi.string()
-      .regex(/^(http|https):\/\/[www.]*\d*\D{2,}\.(jpg|png|jpeg|gif)/i),
+      .required()
+      .pattern(new RegExp(/(https|http)?:\/\/.*/i)),
   }),
 }), createCard);
 
 router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string()
-      .min(24)
-      .max(24)
+      .required()
       .hex()
-      .required(),
+      .length(24),
   }),
 }), deleteCard);
 
 router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string()
-      .min(24)
-      .max(24)
+      .required()
       .hex()
-      .required(),
+      .length(24),
   }),
 }), likeCard);
 
 router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string()
-      .min(24)
-      .max(24)
+      .required()
       .hex()
-      .required(),
+      .length(24),
   }),
 }), dislikeCard);
 

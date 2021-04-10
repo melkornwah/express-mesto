@@ -43,36 +43,43 @@ module.exports.createUser = (req, res, next) => {
     password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      })
-        .then((user) => {
-          res.send({
-            data: {
-              name: user.name,
-              about: user.about,
-              avatar: user.avatar,
-              email: user.email,
-            },
+  User.findOne(email)
+    .then((u) => {
+      if (!u) {
+        throw new Error('Пользователь по данному email уже зарегистрирован.');
+      } else {
+        bcrypt.hash(password, 10)
+          .then((hash) => {
+            User.create({
+              name,
+              about,
+              avatar,
+              email,
+              password: hash,
+            })
+              .then((user) => {
+                res.send({
+                  data: {
+                    name: user.name,
+                    about: user.about,
+                    avatar: user.avatar,
+                    email: user.email,
+                  },
+                });
+              });
           });
-        })
-        .catch((err) => {
-          if (err.name === 'MongoError' && err.code === 11000) {
-            throw new ConflictError('Пользователь по данному email уже зарегистрирован.');
-          }
-          if (err.name === 'ValidationError') {
-            throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
-          }
-          throw new ServerError('Произошла ошибка на сервере.');
-        })
-        .catch(next);
-    });
+      }
+    })
+    .catch((err) => {
+      if (err.message === 'Пользователь по данному email уже зарегистрирован.') {
+        throw new ConflictError('Пользователь по данному email уже зарегистрирован.');
+      }
+      if (err.name === 'ValidationError') {
+        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+      }
+      throw new ServerError('Произошла ошибка на сервере.');
+    })
+    .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
