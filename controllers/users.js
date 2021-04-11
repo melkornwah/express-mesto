@@ -26,7 +26,7 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findOne(req.user._id)
+  User.findById(req.user._id)
     .orFail(new NotFoundError('Пользователь по указанному _id не найден.'))
     .then((user) => {
       res.send({ data: user });
@@ -43,9 +43,9 @@ module.exports.createUser = (req, res, next) => {
     password,
   } = req.body;
 
-  User.findOne(email)
+  User.findOne({ email })
     .then((u) => {
-      if (!u) {
+      if (u) {
         throw new Error('Пользователь по данному email уже зарегистрирован.');
       } else {
         bcrypt.hash(password, 10)

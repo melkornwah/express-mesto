@@ -6,18 +6,11 @@ const {
 
 router.get('/users', getUsers);
 
-router.get('/users/me', celebrate({
-  params: Joi.object().keys({
-    _id: Joi.string()
-      .required()
-      .hex()
-      .length(24),
-  }),
-}), getCurrentUser);
+router.get('/users/me', getCurrentUser);
 
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    _id: Joi.string()
+    userId: Joi.string()
       .required()
       .hex()
       .length(24),
@@ -25,29 +18,19 @@ router.get('/users/:userId', celebrate({
 }), getUserById);
 
 router.patch('/users/me', celebrate({
-  params: Joi.object().keys({
-    _id: Joi.string()
-      .required()
-      .hex()
-      .length(24),
-  }),
   body: Joi.object().keys({
     name: Joi.string()
       .required()
-      .min(1),
+      .min(2)
+      .max(30),
     about: Joi.string()
       .required()
-      .min(1),
+      .min(2)
+      .max(30),
   }),
 }), updateUser);
 
 router.patch('/users/me/avatar', celebrate({
-  params: Joi.object().keys({
-    _id: Joi.string()
-      .required()
-      .hex()
-      .length(24),
-  }),
   body: Joi.object().keys({
     avatar: Joi.string()
       .required()
